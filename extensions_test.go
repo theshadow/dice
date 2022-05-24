@@ -53,6 +53,18 @@ func TestDropExtension_New(t *testing.T) {
 			expected: fmt.Sprintf("Dropping the lowest roll, new rolls: %v", []int{2, 3, 4, 5}),
 		},
 		{
+			name:    "Drop lowest with lowest does not return empty array",
+			which:   "lowest",
+			results: Results{Rolls: []int{2, 9, 8, 2, 10}},
+			roll: formula.Roll{
+				Count:      5,
+				Sides:      5,
+				Modifier:   0,
+				Extensions: make(map[string][]string),
+			},
+			expected: fmt.Sprintf("Dropping the lowest roll, new rolls: %v", []int{9, 8, 2, 10}),
+		},
+		{
 			name:    "Drop highest without duplicates",
 			which:   "highest",
 			results: Results{Rolls: []int{1, 2, 3, 4, 5}},

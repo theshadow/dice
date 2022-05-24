@@ -258,7 +258,10 @@ func newDropxtension(params []string) DropExtension {
 
 func (ext DropExtension) Name() string { return DropExtensionName }
 func (ext DropExtension) Exec(fr Results, r formula.Roll) (string, error) {
-	which := 1
+	which := 0
+	if ext.Which == DropLowest {
+		which = r.Sides
+	}
 
 	for _, roll := range fr.Rolls {
 		if ext.Which == DropLowest && roll <= which || ext.Which == DropHighest && roll >= which {
