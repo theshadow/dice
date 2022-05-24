@@ -234,8 +234,8 @@ const (
 )
 
 var DropLabels = []string{
-	"highest",
 	"lowest",
+	"highest",
 }
 
 // DropExtension drops the lowest or the highest roll
@@ -258,7 +258,7 @@ func newDropxtension(params []string) DropExtension {
 
 func (ext DropExtension) Name() string { return DropExtensionName }
 func (ext DropExtension) Exec(fr Results, r formula.Roll) (string, error) {
-	var which int
+	which := 1
 
 	for _, roll := range fr.Rolls {
 		if ext.Which == DropLowest && roll <= which || ext.Which == DropHighest && roll >= which {
@@ -266,15 +266,20 @@ func (ext DropExtension) Exec(fr Results, r formula.Roll) (string, error) {
 		}
 	}
 
-	for i, _ := range fr.Rolls {
+	var rolls []int
+	for i := range fr.Rolls {
 		if fr.Rolls[i] == which {
-			fr.Rolls[i] = fr.Rolls[len(fr.Rolls)-1]
-			fr.Rolls = fr.Rolls[:len(fr.Rolls)-1]
+			j := i + 1
+			if j > len(fr.Rolls) {
+				j = len(fr.Rolls) - 1
+			}
+			rolls = append(rolls, fr.Rolls[:i]...)
+			rolls = append(rolls, fr.Rolls[j:]...)
 			break
 		}
 	}
 
-	return fmt.Sprintf("Dropping the %s roll, %d", DropLabels[ext.Which], which), nil
+	return fmt.Sprintf("Dropping the %s roll, new rolls: %v", DropLabels[ext.Which], rolls), nil
 }
 
 type extension struct {
